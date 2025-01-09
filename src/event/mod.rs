@@ -1,10 +1,12 @@
-#[derive(Debug, Clone, PartialEq)]
+use crate::geometry::Pos;
+
+#[derive(Debug, Clone)]
 pub enum Event {
     Player(PlayerEvent),
     Game(GameEvent),
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub enum GameEvent {
     Pause,
     Play,
@@ -12,7 +14,9 @@ pub enum GameEvent {
     Quit,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub enum PlayerEvent {
     Move(f32, f32),
+    Aim(Pos),
+    Shoot,
 }

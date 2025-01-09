@@ -41,16 +41,9 @@ impl Entity for Bullet {
         "Bullet".to_string()
     }
 
-    fn update(&mut self, state: &crate::state::State) {
+    fn update(&mut self, _: &crate::state::State) {
         let x = self.pos.0 + self.angle.cos() * self.vel;
         let y = self.pos.1 + self.angle.sin() * self.vel;
-
-        if !state.canvas.contains(&self.pos) {
-            state
-                .projectiles
-                .borrow_mut()
-                .retain_mut(|projectile| state.canvas.contains(projectile.borrow().pos()));
-        }
 
         self.pos = Pos(x, y);
     }

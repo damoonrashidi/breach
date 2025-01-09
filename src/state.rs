@@ -1,6 +1,10 @@
 use std::{cell::RefCell, error::Error, io::Write};
 
-use crossterm::{cursor::Hide, terminal::Clear};
+use crossterm::{
+    cursor::{Hide, MoveTo},
+    style::{Print, ResetColor, SetForegroundColor},
+    terminal::Clear,
+};
 
 use crate::{
     entity::{enemies::Goblo, player::Player, Entity},
@@ -61,6 +65,10 @@ impl State {
         self.enemies
             .borrow_mut()
             .retain_mut(|enemy| enemy.borrow_mut().is_alive());
+
+        self.projectiles
+            .borrow_mut()
+            .retain_mut(|projectile| self.canvas.contains(projectile.borrow().pos()));
     }
 
     pub fn render(&self) -> Result<(), Box<dyn Error>> {
@@ -72,7 +80,26 @@ impl State {
             enemy.borrow().render(&mut stdout)?;
         }
 
+        for projectile in self.projectiles.borrow().iter() {
+            projectile.borrow().render(&mut stdout)?;
+        }
+
         self.player.borrow().render(&mut stdout)?;
+
+        let player = self.player.borrow();
+
+        let c_x = player.pos.0 + player.aim.cos() * 10.;
+        let c_y = player.pos.1 + player.aim.sin() * 5.;
+
+        let (c_x, c_y) = Pos(c_x, c_y).into();
+
+        crossterm::queue!(
+            stdout,
+            MoveTo(c_x, c_y),
+            SetForegroundColor(crossterm::style::Color::Magenta),
+            Print('⌖'),
+            ResetColor
+        )?;
 
         stdout.flush()?;
 
