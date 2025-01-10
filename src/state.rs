@@ -7,12 +7,15 @@ use crossterm::{
 };
 
 use crate::{
-    entity::{enemies::Goblo, player::Player, Entity},
+    entity::{
+        effect::Effect, enemies::Goblo, enemy::Enemy, player::Player, projectile::Projectile,
+        Entity,
+    },
     geometry::Pos,
     render::Render,
 };
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum GameMode {
     Play,
     Pause,
@@ -21,12 +24,11 @@ pub enum GameMode {
 #[derive(Debug)]
 pub struct State {
     pub mode: RefCell<GameMode>,
-    pub canvas: crate::geometry::Rect, // Immutable, no RefCell needed
+    pub canvas: crate::geometry::Rect,
     pub player: RefCell<crate::entity::player::Player>,
     pub enemies: RefCell<Vec<RefCell<Box<dyn crate::entity::enemy::Enemy>>>>,
     pub projectiles: RefCell<Vec<RefCell<Box<dyn crate::entity::projectile::Projectile>>>>,
-    // pub projectiles: Vec<Box<dyn Projectile>>,
-    // pub effects: Vec<Box<dyn Effect>>,
+    pub effects: RefCell<Vec<RefCell<Box<dyn crate::entity::effect::Effect>>>>,
     pub log: RefCell<Option<String>>,
 }
 
@@ -39,6 +41,7 @@ impl State {
             player: RefCell::new(Player::new(player_pos)),
             enemies: RefCell::new(vec![RefCell::new(Box::new(Goblo::new(Pos(10., 10.))))]),
             projectiles: RefCell::new(vec![]),
+            effects: RefCell::new(vec![]),
             log: RefCell::new(None),
         }
     }
@@ -49,6 +52,24 @@ impl State {
 
     pub fn pause(&mut self) {
         self.mode = RefCell::new(GameMode::Pause);
+    }
+
+    pub fn spawn_enemy(&mut self, enemy: impl Enemy + 'static) {
+        self.enemies
+            .borrow_mut()
+            .push(RefCell::new(Box::new(enemy)));
+    }
+
+    pub fn spawn_projectile(&mut self, projectile: impl Projectile + 'static) {
+        self.projectiles
+            .borrow_mut()
+            .push(RefCell::new(Box::new(projectile)));
+    }
+
+    pub fn spawn_effect(&mut self, effect: impl Effect + 'static) {
+        self.effects
+            .borrow_mut()
+            .push(RefCell::new(Box::new(effect)));
     }
 
     pub fn frame(&self) {
@@ -62,9 +83,17 @@ impl State {
             projectile.borrow_mut().update(self);
         }
 
+        for effect in self.effects.borrow_mut().iter() {
+            effect.borrow_mut().update(self);
+        }
+
         self.enemies
             .borrow_mut()
             .retain_mut(|enemy| enemy.borrow_mut().is_alive());
+
+        self.effects
+            .borrow_mut()
+            .retain_mut(|effect| effect.borrow_mut().is_done());
 
         self.projectiles
             .borrow_mut()
@@ -82,6 +111,10 @@ impl State {
 
         for projectile in self.projectiles.borrow().iter() {
             projectile.borrow().render(&mut stdout)?;
+        }
+
+        for effect in self.effects.borrow().iter() {
+            effect.borrow().render(&mut stdout)?;
         }
 
         self.player.borrow().render(&mut stdout)?;

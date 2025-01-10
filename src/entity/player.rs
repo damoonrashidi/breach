@@ -32,6 +32,10 @@ impl Entity for Player {
     }
 
     fn update(&mut self, _: &crate::state::State) {}
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
 }
 
 impl Render for Player {
@@ -62,9 +66,5 @@ impl Collidable for Player {
         if let Some(enemy) = other.as_any().downcast_ref::<Box<dyn Enemy>>() {
             self.hp = self.hp.saturating_sub(enemy.dmg());
         }
-    }
-
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
     }
 }

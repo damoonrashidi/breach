@@ -3,7 +3,6 @@ use crate::{geometry::Pos, render::Render};
 use crossterm::{cursor::MoveTo, style::Print};
 
 #[derive(Debug, Clone, Copy)]
-#[allow(unused)]
 pub struct Goblo {
     hp: u16,
     pos: Pos,
@@ -36,6 +35,10 @@ impl Entity for Goblo {
             self.pos.0 + alpha.cos() * 0.2,
             self.pos.1 + alpha.sin() * 0.1,
         );
+    }
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
     }
 }
 

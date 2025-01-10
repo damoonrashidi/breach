@@ -1,8 +1,6 @@
-use crossterm::{cursor::MoveTo, style::Print};
-
-use crate::{geometry::Pos, render::Render};
-
 use super::{projectile::Projectile, Collidable, Entity};
+use crate::{geometry::Pos, render::Render};
+use crossterm::{cursor::MoveTo, style::Print};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Bullet {
@@ -47,6 +45,10 @@ impl Entity for Bullet {
 
         self.pos = Pos(x, y);
     }
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
 }
 
 impl Collidable for Bullet {
@@ -59,8 +61,4 @@ impl Collidable for Bullet {
     }
 
     fn on_hit(&mut self, _other: &dyn Collidable, _state: &mut crate::state::State) {}
-
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
-    }
 }
