@@ -1,16 +1,16 @@
-use super::{enemy::Enemy, Collidable, Entity};
+use super::{enemy::Enemy, projectile::Projectile, projectiles::Bullet, Collidable, Entity};
 use crate::{geometry::Pos, render::Render};
 use crossterm::{cursor::MoveTo, style::Print};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Goblo {
-    hp: u16,
+    hp: u32,
     pos: Pos,
 }
 
 impl Goblo {
     pub fn new(pos: Pos) -> Self {
-        Self { hp: 254, pos }
+        Self { hp: 10, pos }
     }
 }
 
@@ -48,5 +48,21 @@ impl Render for Goblo {
         crossterm::queue!(stdout, MoveTo(x, y), Print("G"))?;
 
         Ok(())
+    }
+}
+
+impl Collidable for Goblo {
+    fn hitbox(&self) -> crate::geometry::Rect {
+        crate::geometry::Rect {
+            pos: self.pos,
+            w: 2.,
+            h: 2.,
+        }
+    }
+
+    fn on_hit(&mut self, other: Box<&dyn Collidable>, _: &crate::state::State) {
+        if let Some(projectile) = (*other).as_any().downcast_ref::<Bullet>() {
+            self.hp = self.hp.saturating_sub(projectile.dmg());
+        }
     }
 }

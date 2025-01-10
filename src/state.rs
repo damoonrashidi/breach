@@ -12,6 +12,7 @@ use crate::{
         Entity,
     },
     geometry::Pos,
+    map::Map,
     render::Render,
 };
 
@@ -20,10 +21,10 @@ pub enum GameMode {
     Play,
     Pause,
 }
-
 #[derive(Debug)]
 pub struct State {
     pub mode: RefCell<GameMode>,
+    pub map: RefCell<Map>,
     pub canvas: crate::geometry::Rect,
     pub player: RefCell<crate::entity::player::Player>,
     pub enemies: RefCell<Vec<RefCell<Box<dyn crate::entity::enemy::Enemy>>>>,
@@ -37,6 +38,7 @@ impl State {
         let player_pos = canvas.center();
         Self {
             mode: RefCell::new(GameMode::Play),
+            map: RefCell::new(Map::new()),
             canvas,
             player: RefCell::new(Player::new(player_pos)),
             enemies: RefCell::new(vec![RefCell::new(Box::new(Goblo::new(Pos(10., 10.))))]),
@@ -83,17 +85,31 @@ impl State {
             projectile.borrow_mut().update(self);
         }
 
+        for enemy in self.enemies.borrow_mut().iter() {
+            let mut enemy = enemy.borrow_mut();
+            let enemy_hitbox = enemy.hitbox();
+
+            for projectile in self.projectiles.borrow_mut().iter() {
+                let mut projectile = projectile.borrow_mut();
+                if enemy_hitbox.intersects(&projectile.hitbox()) {
+                    *self.log.borrow_mut() = Some(format!("hit {enemy:?}"));
+                    enemy.on_hit(Box::new(projectile.as_ref()), self);
+                    projectile.on_hit(Box::new(enemy.as_ref()), self);
+                }
+            }
+        }
+
         for effect in self.effects.borrow_mut().iter() {
             effect.borrow_mut().update(self);
         }
 
         self.enemies
             .borrow_mut()
-            .retain_mut(|enemy| enemy.borrow_mut().is_alive());
+            .retain_mut(|enemy| enemy.borrow().is_alive());
 
         self.effects
             .borrow_mut()
-            .retain_mut(|effect| effect.borrow_mut().is_done());
+            .retain_mut(|effect| effect.borrow().is_done());
 
         self.projectiles
             .borrow_mut()
@@ -104,6 +120,8 @@ impl State {
         let mut stdout = std::io::stdout();
 
         crossterm::execute!(stdout, Hide, Clear(crossterm::terminal::ClearType::All))?;
+
+        // self.map.borrow().render(&mut stdout)?;
 
         for enemy in self.enemies.borrow().iter() {
             enemy.borrow().render(&mut stdout)?;
@@ -133,6 +151,9 @@ impl State {
             Print('⌖'),
             ResetColor
         )?;
+
+        let msg = self.log.borrow().clone().unwrap_or_default();
+        crossterm::queue!(stdout, MoveTo(0, (self.canvas.h - 1.0) as u16), Print(msg))?;
 
         stdout.flush()?;
 

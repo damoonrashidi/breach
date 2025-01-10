@@ -43,4 +43,11 @@ impl Rect {
         (self.pos.0..self.pos.0 + self.w).contains(x)
             && (self.pos.0..self.pos.0 + self.h).contains(y)
     }
+
+    pub fn intersects(&self, other: &Rect) -> bool {
+        self.pos.0 < other.pos.0 + other.w
+            && self.pos.0 + self.w > other.pos.0
+            && self.pos.1 < other.pos.1 + other.h
+            && self.pos.1 + self.h > other.pos.1
+    }
 }

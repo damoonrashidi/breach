@@ -18,5 +18,5 @@ pub trait Entity: Debug {
 
 pub trait Collidable: Entity {
     fn hitbox(&self) -> Rect;
-    fn on_hit(&mut self, other: &dyn Collidable, state: &mut State);
+    fn on_hit(&mut self, other: Box<&dyn Collidable>, state: &State);
 }

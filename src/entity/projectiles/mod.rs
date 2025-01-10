@@ -60,5 +60,7 @@ impl Collidable for Bullet {
         }
     }
 
-    fn on_hit(&mut self, _other: &dyn Collidable, _state: &mut crate::state::State) {}
+    fn on_hit(&mut self, _other: Box<&dyn Collidable>, _state: &crate::state::State) {
+        self.pos = Pos(-1., -1.);
+    }
 }

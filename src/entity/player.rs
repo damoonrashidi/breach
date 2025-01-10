@@ -59,7 +59,7 @@ impl Collidable for Player {
         Rect::new(&self.pos, 3., 3.)
     }
 
-    fn on_hit(&mut self, other: &dyn Collidable, _: &mut crate::state::State) {
+    fn on_hit(&mut self, other: Box<&dyn Collidable>, _: &crate::state::State) {
         if let Some(projectile) = other.as_any().downcast_ref::<Box<dyn Projectile>>() {
             self.hp = self.hp.saturating_sub(projectile.dmg());
         }
