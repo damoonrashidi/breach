@@ -9,6 +9,11 @@ use crossterm::{
 };
 use std::error::Error;
 
+#[derive(Debug, Clone)]
+pub enum Ability {
+    Blink,
+}
+
 #[derive(Debug)]
 pub struct Player {
     hp: u32,

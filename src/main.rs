@@ -1,7 +1,7 @@
 use std::{error::Error, thread, time::Duration};
 
 use breach::{
-    entity::{projectiles::Bullet, Collidable},
+    entity::{effects::blink::BlinkEffect, projectiles::Bullet, Collidable},
     event::GameEvent,
     geometry::{Pos, Rect},
     state::State,
@@ -40,6 +40,15 @@ fn main() -> Result<(), Box<dyn Error>> {
                         let bullet = Bullet::new(player.hitbox().center(), 1., player.aim);
                         drop(player);
                         state.spawn_projectile(bullet);
+                    }
+                    breach::event::PlayerEvent::Ability(_) => {
+                        let aim = state.player.borrow().aim;
+                        let c = state.player.borrow().hitbox().center();
+                        let x = c.0 + aim.cos() * 10.0;
+                        let y = c.1 + aim.sin() * 5.0;
+                        state.spawn_effect(BlinkEffect::new(c, Pos(x, y)));
+                        state.player.borrow_mut().pos =
+                            Pos(x.clamp(0., state.canvas.w), y.clamp(0., state.canvas.h));
                     }
                 },
                 breach::event::Event::Game(game_event) => match game_event {

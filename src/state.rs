@@ -1,4 +1,4 @@
-use std::{cell::RefCell, error::Error, io::Write};
+use std::{cell::RefCell, error::Error, fmt::Display, io::Write};
 
 use crossterm::{
     cursor::{Hide, MoveTo},
@@ -56,6 +56,10 @@ impl State {
         self.mode = RefCell::new(GameMode::Pause);
     }
 
+    pub fn log(&self, msg: impl Display) {
+        *self.log.borrow_mut() = Some(msg.to_string())
+    }
+
     pub fn spawn_enemy(&self, enemy: impl Enemy + 'static) {
         self.enemies
             .borrow_mut()
@@ -92,7 +96,6 @@ impl State {
             for projectile in self.projectiles.borrow_mut().iter() {
                 let mut projectile = projectile.borrow_mut();
                 if enemy_hitbox.intersects(&projectile.hitbox()) {
-                    *self.log.borrow_mut() = Some(format!("hit {enemy:?}"));
                     enemy.on_hit(Box::new(projectile.as_ref()), self);
                     projectile.on_hit(Box::new(enemy.as_ref()), self);
                 }
@@ -109,7 +112,7 @@ impl State {
 
         self.effects
             .borrow_mut()
-            .retain_mut(|effect| effect.borrow().is_done());
+            .retain_mut(|effect| !effect.borrow().is_done());
 
         self.projectiles
             .borrow_mut()

@@ -1,4 +1,4 @@
-use crate::geometry::Pos;
+use crate::{entity::player::Ability, geometry::Pos};
 
 #[derive(Debug, Clone)]
 pub enum Event {
@@ -19,4 +19,5 @@ pub enum PlayerEvent {
     Move(f32, f32),
     Aim(Pos),
     Shoot,
+    Ability(Ability),
 }

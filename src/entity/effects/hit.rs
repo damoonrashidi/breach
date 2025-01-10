@@ -25,7 +25,7 @@ impl HitEffect {
 
 impl Effect for HitEffect {
     fn is_done(&self) -> bool {
-        self.frame < 5
+        self.frame >= 5
     }
 }
 

@@ -62,6 +62,12 @@ pub fn handle_input(tx: Sender<crate::event::Event>) {
                         code: KeyCode::Char('p'),
                         ..
                     } => Some(crate::event::Event::Game(crate::event::GameEvent::Pause)),
+                    KeyEvent {
+                        code: KeyCode::Char('e'),
+                        ..
+                    } => Some(crate::event::Event::Player(
+                        crate::event::PlayerEvent::Ability(crate::entity::player::Ability::Blink),
+                    )),
                     _ => None,
                 },
                 _ => None,
