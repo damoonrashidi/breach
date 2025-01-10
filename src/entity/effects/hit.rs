@@ -9,8 +9,18 @@ use crate::{
 #[derive(Debug, Clone)]
 pub struct HitEffect {
     pos: Pos,
-    dmg: u16,
+    dmg: u32,
     frame: u8,
+}
+
+impl HitEffect {
+    pub fn new(pos: &Pos, dmg: u32) -> Self {
+        Self {
+            pos: *pos,
+            dmg,
+            frame: 0,
+        }
+    }
 }
 
 impl Effect for HitEffect {
@@ -25,7 +35,8 @@ impl Entity for HitEffect {
     }
 
     fn update(&mut self, _: &crate::state::State) {
-        self.pos.1 -= 1.0;
+        self.frame += 1;
+        self.pos.1 -= 0.5;
     }
 
     fn as_any(&self) -> &dyn std::any::Any {
@@ -39,7 +50,7 @@ impl Render for HitEffect {
         stdout: &mut std::io::Stdout,
     ) -> std::result::Result<(), std::boxed::Box<(dyn std::error::Error + 'static)>> {
         let (x, y) = self.pos.into();
-        crossterm::queue!(stdout, MoveTo(x, y), Print(self.dmg))?;
+        crossterm::queue!(stdout, MoveTo(x, y), Print("-"), Print(self.dmg))?;
 
         Ok(())
     }

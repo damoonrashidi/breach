@@ -56,19 +56,19 @@ impl State {
         self.mode = RefCell::new(GameMode::Pause);
     }
 
-    pub fn spawn_enemy(&mut self, enemy: impl Enemy + 'static) {
+    pub fn spawn_enemy(&self, enemy: impl Enemy + 'static) {
         self.enemies
             .borrow_mut()
             .push(RefCell::new(Box::new(enemy)));
     }
 
-    pub fn spawn_projectile(&mut self, projectile: impl Projectile + 'static) {
+    pub fn spawn_projectile(&self, projectile: impl Projectile + 'static) {
         self.projectiles
             .borrow_mut()
             .push(RefCell::new(Box::new(projectile)));
     }
 
-    pub fn spawn_effect(&mut self, effect: impl Effect + 'static) {
+    pub fn spawn_effect(&self, effect: impl Effect + 'static) {
         self.effects
             .borrow_mut()
             .push(RefCell::new(Box::new(effect)));

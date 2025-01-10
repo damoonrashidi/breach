@@ -1,4 +1,7 @@
-use super::{enemy::Enemy, projectile::Projectile, projectiles::Bullet, Collidable, Entity};
+use super::{
+    effects::hit::HitEffect, enemy::Enemy, projectile::Projectile, projectiles::Bullet, Collidable,
+    Entity,
+};
 use crate::{geometry::Pos, render::Render};
 use crossterm::{cursor::MoveTo, style::Print};
 
@@ -60,9 +63,11 @@ impl Collidable for Goblo {
         }
     }
 
-    fn on_hit(&mut self, other: Box<&dyn Collidable>, _: &crate::state::State) {
+    fn on_hit(&mut self, other: Box<&dyn Collidable>, state: &crate::state::State) {
         if let Some(projectile) = (*other).as_any().downcast_ref::<Bullet>() {
             self.hp = self.hp.saturating_sub(projectile.dmg());
+            let effect = HitEffect::new(&self.pos, projectile.dmg());
+            state.spawn_effect(effect);
         }
     }
 }
