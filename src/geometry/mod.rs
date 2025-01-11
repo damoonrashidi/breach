@@ -2,10 +2,12 @@
 pub struct Pos(pub f32, pub f32);
 
 impl Pos {
+    #[must_use]
     pub fn transpose(&self, Pos(dx, dy): Pos) -> Pos {
         Pos(self.0 + dx, self.1 + dy)
     }
 
+    #[must_use]
     pub fn angle(&self, other: &Pos) -> f32 {
         let delta_x = other.0 - self.0;
         let delta_y = other.1 - self.1;
@@ -28,10 +30,12 @@ pub struct Rect {
 }
 
 impl Rect {
+    #[must_use]
     pub fn new(pos: &Pos, w: f32, h: f32) -> Self {
         Self { pos: *pos, w, h }
     }
 
+    #[must_use]
     pub fn center(&self) -> Pos {
         Pos(
             (self.pos.0 + self.pos.0 + self.w) / 2.,
@@ -39,11 +43,13 @@ impl Rect {
         )
     }
 
+    #[must_use]
     pub fn contains(&self, Pos(x, y): &Pos) -> bool {
         (self.pos.0..self.pos.0 + self.w).contains(x)
             && (self.pos.0..self.pos.0 + self.h).contains(y)
     }
 
+    #[must_use]
     pub fn intersects(&self, other: &Rect) -> bool {
         self.pos.0 < other.pos.0 + other.w
             && self.pos.0 + self.w > other.pos.0

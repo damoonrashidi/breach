@@ -17,7 +17,7 @@ pub fn handle_input(tx: Sender<crate::event::Event>) {
                     } = evt
                     {
                         Some(crate::event::Event::Player(crate::event::PlayerEvent::Aim(
-                            Pos(evt.column as f32, evt.row as f32),
+                            Pos(evt.column.into(), evt.row.into()),
                         )))
                     } else {
                         None
@@ -75,6 +75,6 @@ pub fn handle_input(tx: Sender<crate::event::Event>) {
                 tx.send(action).ok();
             }
         }
-        drop(tx)
+        drop(tx);
     });
 }

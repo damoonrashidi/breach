@@ -10,8 +10,9 @@ pub struct Bullet {
 }
 
 impl Bullet {
+    #[must_use]
     pub fn new(pos: Pos, vel: f32, angle: f32) -> Self {
-        Self { pos, vel, angle }
+        Self { pos, angle, vel }
     }
 }
 

@@ -14,6 +14,7 @@ pub struct HitEffect {
 }
 
 impl HitEffect {
+    #[must_use]
     pub fn new(pos: &Pos, dmg: u32) -> Self {
         Self {
             pos: *pos,

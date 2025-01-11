@@ -1,5 +1,4 @@
 #![feature(trait_upcasting)]
-
 pub mod effect;
 pub mod entity;
 pub mod event;

@@ -1,7 +1,30 @@
 [package]
 name = "breach"
+description = "A game where you clear rooms, played in your terminal"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+categories = ["game", "cli", "tui"]
+keywords = ["game", "cli", "tui"]
+readme = true
+repository = "https://github.com/damoonrashidi/breach"
 
 [dependencies]
 crossterm = "0.28.1"
+
+[lints.rust]
+unsafe_code = "forbid"
+warnings = "deny"
+
+[lints.clippy]
+all = { level = "deny", priority = 0 }
+cargo = { level = "deny", priority = 0 }
+complexity = { level = "deny", priority = 0 }
+perf = { level = "deny", priority = 0 }
+style = { level = "deny", priority = 0 }
+pedantic = { level = "deny", priority = 0 }
+cast_possible_truncation = { level = "allow", priority = 1 }
+cast_possible_wrap = { level = "allow", priority = 1 }
+cast_sign_loss = { level = "allow", priority = 1 }
+cast_precision_loss = { level = "allow", priority = 1 }
+multiple_crate_versions = { level = "allow", priority = 1 }

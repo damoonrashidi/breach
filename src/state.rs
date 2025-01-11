@@ -34,11 +34,14 @@ pub struct State {
 }
 
 impl State {
+    #[must_use]
     pub fn new(canvas: crate::geometry::Rect) -> Self {
-        let player_pos = canvas.center();
+        let map = Map::from(include_str!("map/levels/level_1.txt"));
+        let player_pos = map.start_pos;
+
         Self {
             mode: RefCell::new(GameMode::Play),
-            map: RefCell::new(Map::new()),
+            map: RefCell::new(map),
             canvas,
             player: RefCell::new(Player::new(player_pos)),
             enemies: RefCell::new(vec![RefCell::new(Box::new(Goblo::new(Pos(10., 10.))))]),
@@ -57,7 +60,7 @@ impl State {
     }
 
     pub fn log(&self, msg: impl Display) {
-        *self.log.borrow_mut() = Some(msg.to_string())
+        *self.log.borrow_mut() = Some(msg.to_string());
     }
 
     pub fn spawn_enemy(&self, enemy: impl Enemy + 'static) {
@@ -119,12 +122,18 @@ impl State {
             .retain_mut(|projectile| self.canvas.contains(projectile.borrow().pos()));
     }
 
+    /**
+    Renders the entire game state for the current frame
+
+    # Errors
+    Will error out if any of the objects cannot be rendered
+    */
     pub fn render(&self) -> Result<(), Box<dyn Error>> {
         let mut stdout = std::io::stdout();
 
         crossterm::execute!(stdout, Hide, Clear(crossterm::terminal::ClearType::All))?;
 
-        // self.map.borrow().render(&mut stdout)?;
+        self.map.borrow().render(&mut stdout)?;
 
         for enemy in self.enemies.borrow().iter() {
             enemy.borrow().render(&mut stdout)?;

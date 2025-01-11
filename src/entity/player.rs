@@ -22,6 +22,7 @@ pub struct Player {
 }
 
 impl Player {
+    #[must_use]
     pub fn new(pos: Pos) -> Self {
         Self {
             hp: 100,

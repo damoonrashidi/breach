@@ -15,6 +15,7 @@ pub struct BlinkEffect {
 }
 
 impl BlinkEffect {
+    #[must_use]
     pub fn new(from: Pos, to: Pos) -> Self {
         Self {
             from,
@@ -53,10 +54,10 @@ impl Render for BlinkEffect {
         let alpha = self.from.angle(&self.to);
 
         for i in 0..3 {
-            let x = self.from.0 + alpha.cos() * (i as f32 * 2.0);
-            let y = self.from.1 + alpha.sin() * i as f32;
+            let x: f32 = self.from.0 + alpha.cos() * f32::from(i) * 2.0;
+            let y: f32 = self.from.1 + alpha.sin() * f32::from(i);
             let frame = self.frame.saturating_sub(i * 5) as usize;
-            let chr = self.frames.get(frame..frame + 1).unwrap_or("+");
+            let chr = self.frames.get(frame..=frame).unwrap_or("+");
 
             crossterm::queue!(stdout, MoveTo(x as u16, y as u16), Print(chr))?;
         }

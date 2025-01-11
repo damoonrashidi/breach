@@ -10,7 +10,11 @@ use crossterm::event::{DisableMouseCapture, EnableMouseCapture};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let (width, height) = crossterm::terminal::size()?;
-    let mut state = State::new(Rect::new(&Pos(0.0, 0.0), width as f32, height as f32));
+    let mut state = State::new(Rect::new(
+        &Pos(0.0, 0.0),
+        f32::from(width),
+        f32::from(height),
+    ));
     let (tx, rx) = std::sync::mpsc::channel::<breach::event::Event>();
 
     breach::input::handle_input(tx.clone());
@@ -33,12 +37,11 @@ fn main() -> Result<(), Box<dyn Error>> {
                     }
                     breach::event::PlayerEvent::Aim(pos) => {
                         let player_pos = state.player.borrow().pos;
-                        state.player.borrow_mut().aim = player_pos.angle(&pos)
+                        state.player.borrow_mut().aim = player_pos.angle(&pos);
                     }
                     breach::event::PlayerEvent::Shoot => {
                         let player = state.player.borrow();
                         let bullet = Bullet::new(player.hitbox().center(), 1., player.aim);
-                        drop(player);
                         state.spawn_projectile(bullet);
                     }
                     breach::event::PlayerEvent::Ability(_) => {
@@ -55,7 +58,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     GameEvent::Pause => state.pause(),
                     GameEvent::Play => state.play(),
                     GameEvent::Resize(w, h) => {
-                        state.canvas = Rect::new(&Pos(0., 0.), w as f32, h as f32)
+                        state.canvas = Rect::new(&Pos(0., 0.), f32::from(w), f32::from(h));
                     }
                     GameEvent::Quit => break,
                 },

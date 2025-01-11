@@ -12,6 +12,7 @@ pub struct Goblo {
 }
 
 impl Goblo {
+    #[must_use]
     pub fn new(pos: Pos) -> Self {
         Self { hp: 10, pos }
     }
