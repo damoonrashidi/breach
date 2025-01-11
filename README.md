@@ -2,6 +2,12 @@
 
 A Breach the Room type game that you can play in your terminal.
 
+
+
+https://github.com/user-attachments/assets/a4c8e69e-b921-420f-be3b-34fb868c0856
+
+
+
 ## Goals for v1.
 
 - [x] Control a character
