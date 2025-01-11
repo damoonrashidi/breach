@@ -66,7 +66,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
         state.frame();
         state.render()?;
-        thread::sleep(Duration::from_millis(8));
+        thread::sleep(Duration::from_millis(16));
     }
 
     crossterm::execute!(std::io::stdout(), DisableMouseCapture)?;

@@ -19,7 +19,7 @@ impl Display for Tile {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let c = match self {
             Tile::Wall => '#',
-            Tile::Floor => ' ',
+            Tile::Floor => '-',
         };
 
         write!(f, "{c}")
@@ -43,26 +43,21 @@ impl From<&str> for Map {
         let tile_chars: Vec<Vec<_>> = value.lines().map(|line| line.chars().collect()).collect();
         let w = tile_chars[0].len();
         let h = tile_chars.len();
+        let mut start_pos = Pos(0., 0.);
 
-        let level = vec![vec![Tile::Floor; w]; h];
+        let mut level = vec![vec![Tile::Floor; w]; h];
 
         #[allow(clippy::needless_range_loop)]
         for y in 0..h {
             for x in 0..w {
+                level[y][x] = tile_chars[y][x].try_into().unwrap_or(Tile::Floor);
                 if tile_chars[y][x] == '@' {
-                    #[allow(clippy::cast_precision_loss)]
-                    return Self {
-                        level,
-                        start_pos: Pos(x as f32, y as f32),
-                    };
+                    start_pos = Pos(x as f32, y as f32);
                 }
             }
         }
 
-        Self {
-            level,
-            start_pos: Pos(0., 0.),
-        }
+        Self { start_pos, level }
     }
 }
 
