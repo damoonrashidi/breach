@@ -14,6 +14,11 @@ impl Pos {
 
         delta_y.atan2(delta_x)
     }
+
+    #[must_use]
+    pub fn distance(&self, other: &Pos) -> f32 {
+        ((self.0 - other.0).powi(2) + (self.1 - other.1).powi(2)).sqrt()
+    }
 }
 
 impl From<Pos> for (u16, u16) {

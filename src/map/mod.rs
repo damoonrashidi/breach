@@ -1,7 +1,7 @@
-use std::fmt::Display;
+use crossterm::{cursor::MoveTo, style::Print};
 
 use crate::{geometry::Pos, render::Render};
-use crossterm::{cursor::MoveTo, style::Print};
+use std::fmt::Display;
 
 #[derive(Debug)]
 pub struct Map {

@@ -1,7 +1,7 @@
 use std::{cell::RefCell, error::Error, fmt::Display, io::Write};
 
 use crossterm::{
-    cursor::{Hide, MoveTo},
+    cursor::MoveTo,
     style::{Print, ResetColor, SetForegroundColor},
     terminal::Clear,
 };
@@ -131,7 +131,7 @@ impl State {
     pub fn render(&self) -> Result<(), Box<dyn Error>> {
         let mut stdout = std::io::stdout();
 
-        crossterm::execute!(stdout, Hide, Clear(crossterm::terminal::ClearType::All))?;
+        crossterm::queue!(stdout, Clear(crossterm::terminal::ClearType::All))?;
 
         self.map.borrow().render(&mut stdout)?;
 

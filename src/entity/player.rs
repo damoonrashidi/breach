@@ -16,18 +16,20 @@ pub enum Ability {
 
 #[derive(Debug)]
 pub struct Player {
-    hp: u32,
     pub pos: Pos,
     pub aim: f32,
+    pub fov: i32,
+    hp: u32,
 }
 
 impl Player {
     #[must_use]
     pub fn new(pos: Pos) -> Self {
         Self {
-            hp: 100,
             pos,
             aim: 0.,
+            fov: 75,
+            hp: 100,
         }
     }
 }
