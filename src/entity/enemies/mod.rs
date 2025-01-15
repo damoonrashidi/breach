@@ -9,12 +9,17 @@ use crossterm::{cursor::MoveTo, style::Print};
 pub struct Goblo {
     hp: u32,
     pos: Pos,
+    vel: f32,
 }
 
 impl Goblo {
     #[must_use]
     pub fn new(pos: Pos) -> Self {
-        Self { hp: 10, pos }
+        Self {
+            hp: 10,
+            pos,
+            vel: 0.05,
+        }
     }
 }
 
@@ -36,8 +41,8 @@ impl Entity for Goblo {
     fn update(&mut self, state: &crate::state::State) {
         let alpha = self.pos.angle(&state.player.borrow().hitbox().center());
         self.pos = Pos(
-            self.pos.0 + alpha.cos() * 0.2,
-            self.pos.1 + alpha.sin() * 0.1,
+            self.pos.0 + alpha.cos() * self.vel * 2.,
+            self.pos.1 + alpha.sin() * self.vel,
         );
     }
 

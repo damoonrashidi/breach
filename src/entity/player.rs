@@ -18,7 +18,7 @@ pub enum Ability {
 pub struct Player {
     pub pos: Pos,
     pub aim: f32,
-    pub fov: i32,
+    pub fov: u32,
     hp: u32,
 }
 
@@ -28,7 +28,7 @@ impl Player {
         Self {
             pos,
             aim: 0.,
-            fov: 75,
+            fov: 90,
             hp: 100,
         }
     }

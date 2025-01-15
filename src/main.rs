@@ -41,7 +41,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     }
                     breach::event::PlayerEvent::Shoot => {
                         let player = state.player.borrow();
-                        let bullet = Bullet::new(player.hitbox().center(), 1., player.aim);
+                        let bullet = Bullet::new(player.hitbox().center(), player.aim);
                         state.spawn_projectile(bullet);
                     }
                     breach::event::PlayerEvent::Ability(_) => {
@@ -66,7 +66,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
         state.frame();
         state.render()?;
-        thread::sleep(Duration::from_millis(16));
+        thread::sleep(Duration::from_millis(4));
     }
 
     crossterm::execute!(std::io::stdout(), DisableMouseCapture)?;

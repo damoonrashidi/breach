@@ -10,19 +10,24 @@ pub fn handle_input(tx: Sender<crate::event::Event>) {
             if let Some(action) = match event {
                 Event::FocusLost => Some(crate::event::Event::Game(GameEvent::Pause)),
                 Event::Resize(w, h) => Some(crate::event::Event::Game(GameEvent::Resize(w, h))),
-                Event::Mouse(evt) => {
-                    if let crossterm::event::MouseEvent {
-                        kind: crossterm::event::MouseEventKind::Moved,
+                Event::Mouse(evt) => match evt {
+                    crossterm::event::MouseEvent {
+                        kind:
+                            crossterm::event::MouseEventKind::Down(crossterm::event::MouseButton::Left),
                         ..
-                    } = evt
-                    {
-                        Some(crate::event::Event::Player(crate::event::PlayerEvent::Aim(
-                            Pos(evt.column.into(), evt.row.into()),
-                        )))
-                    } else {
-                        None
-                    }
-                }
+                    } => Some(crate::event::Event::Player(
+                        crate::event::PlayerEvent::Shoot,
+                    )),
+                    crossterm::event::MouseEvent {
+                        kind:
+                            crossterm::event::MouseEventKind::Drag(crossterm::event::MouseButton::Left)
+                            | crossterm::event::MouseEventKind::Moved,
+                        ..
+                    } => Some(crate::event::Event::Player(crate::event::PlayerEvent::Aim(
+                        Pos(evt.column.into(), evt.row.into()),
+                    ))),
+                    _ => None,
+                },
                 Event::Key(key) => match key {
                     KeyEvent {
                         code: KeyCode::Char('q') | KeyCode::Esc,
@@ -51,12 +56,6 @@ pub fn handle_input(tx: Sender<crate::event::Event>) {
                         ..
                     } => Some(crate::event::Event::Player(
                         crate::event::PlayerEvent::Move(2.0, 0.0),
-                    )),
-                    KeyEvent {
-                        code: KeyCode::Char(' '),
-                        ..
-                    } => Some(crate::event::Event::Player(
-                        crate::event::PlayerEvent::Shoot,
                     )),
                     KeyEvent {
                         code: KeyCode::Char('p'),

@@ -2,7 +2,7 @@ use std::{cell::RefCell, error::Error, fmt::Display, io::Write};
 
 use crossterm::{
     cursor::MoveTo,
-    style::{Print, ResetColor, SetForegroundColor},
+    style::{Print, ResetColor, SetBackgroundColor, SetForegroundColor},
     terminal::Clear,
 };
 
@@ -133,7 +133,26 @@ impl State {
 
         crossterm::queue!(stdout, Clear(crossterm::terminal::ClearType::All))?;
 
-        self.map.borrow().render(&mut stdout)?;
+        let player = self.player.borrow();
+        let fov = player.fov as i32;
+        let aim = player.aim;
+
+        for a in (-fov / 2..fov / 2).step_by(2) {
+            let ray_angle = aim + (a as f32).to_radians();
+
+            for p in 1..=20 {
+                let x = player.pos.0 + ray_angle.cos() * p as f32;
+                let y = player.pos.1 + ray_angle.sin() * p as f32;
+
+                crossterm::queue!(
+                    stdout,
+                    MoveTo(x as u16, y as u16),
+                    SetBackgroundColor(crossterm::style::Color::Black),
+                    Print(' '),
+                    ResetColor,
+                )?;
+            }
+        }
 
         for enemy in self.enemies.borrow().iter() {
             enemy.borrow().render(&mut stdout)?;

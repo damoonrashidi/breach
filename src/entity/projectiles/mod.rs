@@ -11,15 +11,19 @@ pub struct Bullet {
 
 impl Bullet {
     #[must_use]
-    pub fn new(pos: Pos, vel: f32, angle: f32) -> Self {
-        Self { pos, angle, vel }
+    pub fn new(pos: Pos, angle: f32) -> Self {
+        Self {
+            pos,
+            angle,
+            vel: 0.5,
+        }
     }
 }
 
 impl Render for Bullet {
     fn render(&self, stdout: &mut std::io::Stdout) -> Result<(), Box<dyn std::error::Error>> {
         let (x, y) = self.pos.into();
-        crossterm::queue!(stdout, MoveTo(x, y), Print('.'))?;
+        crossterm::queue!(stdout, MoveTo(x, y), Print('•'))?;
 
         Ok(())
     }
